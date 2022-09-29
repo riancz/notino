@@ -1,17 +1,24 @@
 import { createContext, FC, useCallback, useEffect, useState } from "react";
 import { ITodoContext, ITodoResponse, IWithChildren } from "../types";
 
-export const TodosContext = createContext<ITodoContext>({ todos: [], isLoading: true, getById: () => undefined, setIsCompleted: () => { } });
+export const TodosContext = createContext<ITodoContext>({ todos: [], isLoading: true, getById: () => undefined, setIsCompleted: () => { }, errorLoading: false });
 
 export const TodosProvider: FC<IWithChildren> = ({ children }) => {
     const [todos, setTodos] = useState<ITodoResponse[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [errorLoading, setErrorLoading] = useState(false);
 
-    const fetchTodos = async () => {
+    const fetchTodos = () => {
+        setErrorLoading(false);
         setIsLoading(true);
-        const res = await fetch('https://jsonplaceholder.typicode.com/todos');
-        setTodos(await res.json());
-        setIsLoading(false);
+        fetch('https://jsonplaceholder.typicode.com/todos')
+            .then(res => {
+                if (res.status >= 200 && res.status < 300) return res.json();
+                throw Error();
+            })
+            .then((todos) => setTodos(todos))
+            .catch((e) => setErrorLoading(true))
+            .finally(() => setIsLoading(false));
     };
 
     const getById = (id: number) => todos.find((todo) => todo.id === id);
@@ -22,7 +29,7 @@ export const TodosProvider: FC<IWithChildren> = ({ children }) => {
     }, []);
 
     return (
-        <TodosContext.Provider value={{ todos, isLoading, getById, setIsCompleted }}>
+        <TodosContext.Provider value={{ todos, isLoading, getById, setIsCompleted, errorLoading }}>
             {children}
         </TodosContext.Provider>
     );

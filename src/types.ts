@@ -17,6 +17,7 @@ export interface ITodoContext {
   isLoading: boolean;
   getById: (id: number) => ITodoResponse | undefined;
   setIsCompleted: (id: number, completed: boolean) => void;
+  errorLoading: boolean;
 };
 
 export interface IWithChildren {

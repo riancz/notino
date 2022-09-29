@@ -10,10 +10,12 @@ interface IPage {
 };
 
 const Page: React.FC<IPage> = ({ title, backButton = true, children }) => {
-  const { isLoading } = useContext(TodosContext);
+  const { isLoading, errorLoading } = useContext(TodosContext);
+
+  if (errorLoading) return <Centering>Sorry but we were not able to load your ToDos</Centering>;
 
   return isLoading ? (
-    <Loading>Loading...</Loading>
+    <Centering>Loading...</Centering>
   ) : (
     <PageWrapper>
       <header>
@@ -27,7 +29,7 @@ const Page: React.FC<IPage> = ({ title, backButton = true, children }) => {
   );
 };
 
-const Loading = styled.div`
+const Centering = styled.div`
   display: flex;
   height: 100vh;
   justify-content: center;

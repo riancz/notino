@@ -9,7 +9,10 @@ const TodoDetail = () => {
   const { getById, setIsCompleted } = useContext(TodosContext);
 
   const todo = getById(Number(pId))
-  if (!todo) return <p>Sorry but such ToDo is not in our database</p>
+  if (!todo) return (
+    <Page title={`ToDo ID: ${pId}`}>
+      <p>Sorry but such ToDo is not in our database</p>
+    </Page>);
 
   const { title, id, completed, userId } = todo;
   const todoTitle = `ToDo: ${title}`;
